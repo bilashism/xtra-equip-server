@@ -1,0 +1,36 @@
+{
+  "name": "xtraequipserver",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "deploy": "vercel --prod",
+    "package-update": "ncu --interactive --format group",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Md. Taifuzzaman Bilash <bilashism@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.12.0",
+    "stripe": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "npm-check-updates": "^16.4.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-bilashism.git"
+  },
+  "bugs": {
+    "url": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-bilashism/issues"
+  },
+  "homepage": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-bilashism#readme"
+}
