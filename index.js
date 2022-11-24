@@ -62,5 +62,17 @@ const client = new MongoClient(uri, {
 
 const run = async () => {
   const database = client.db("xtraEquip");
+  const categoriesCollection = database.collection("categories");
+
+  // get [limit] from all categories
+  app.get("/categories", async (req, res) => {
+    const limit = parseInt(req.query.limit);
+    const query = {};
+    const result = await categoriesCollection
+      .find(query)
+      .limit(limit)
+      .toArray();
+    res.send(result);
+  });
 };
 run().catch(console.dir);
