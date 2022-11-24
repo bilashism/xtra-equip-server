@@ -63,6 +63,7 @@ const client = new MongoClient(uri, {
 const run = async () => {
   const database = client.db("xtraEquip");
   const categoriesCollection = database.collection("categories");
+  const usersCollection = database.collection("users");
 
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
@@ -72,6 +73,14 @@ const run = async () => {
       .find(query)
       .limit(limit)
       .toArray();
+    res.send(result);
+  });
+
+  // create an user
+  app.post("/users", async (req, res) => {
+    const user = req.body;
+    user.isBuyer = true;
+    const result = await usersCollection.insertOne(user);
     res.send(result);
   });
 };
