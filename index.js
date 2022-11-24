@@ -83,5 +83,19 @@ const run = async () => {
     const result = await usersCollection.insertOne(user);
     res.send(result);
   });
+
+  // issue jwt token
+  app.get("/jwt", async (req, res) => {
+    const email = req?.query?.email;
+    const user = await usersCollection.findOne({ email });
+
+    if (user) {
+      const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, {
+        expiresIn: "10h"
+      });
+      return res.send({ accessToken: token });
+    }
+    res.status(401).send({ accessToken: "" });
+  });
 };
 run().catch(console.dir);
