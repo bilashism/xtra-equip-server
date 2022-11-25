@@ -64,6 +64,7 @@ const run = async () => {
   const database = client.db("xtraEquip");
   const categoriesCollection = database.collection("categories");
   const usersCollection = database.collection("users");
+  const productsCollection = database.collection("products");
 
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
@@ -78,13 +79,25 @@ const run = async () => {
 
   // get all product from a category
   app.get("/categories/:id", async (req, res) => {
+    const categoryId = req.params.id;
+    const categoryName = await categoriesCollection.find();
     res.send([]);
+  });
+
+  // check admin status
+  app.get("/users/admin/:email", verifyToken, async (req, res) => {
+    const email = req.params.email;
+    const query = { email };
+    const result = await usersCollection.findOne(query);
+    res.send({ isAdmin: result?.userRole === "admin" });
   });
 
   // create an user
   app.post("/users", async (req, res) => {
     const user = req.body;
-    user.isBuyer = true;
+    if (!user?.userRole) {
+      user.userRole = "buyer";
+    }
     const isExisting = await usersCollection.findOne({ email: user?.email });
 
     if (isExisting) {
