@@ -100,6 +100,14 @@ const run = async () => {
     res.send({ isAdmin: result?.userRole === "buyer" });
   });
 
+  // check seller status
+  app.get("/users/seller/:email", verifyToken, async (req, res) => {
+    const email = req.params.email;
+    const query = { email };
+    const result = await usersCollection.findOne(query);
+    res.send({ isAdmin: result?.userRole === "seller" });
+  });
+
   // create an user
   app.post("/users", async (req, res) => {
     const user = req.body;
