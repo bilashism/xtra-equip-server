@@ -76,10 +76,21 @@ const run = async () => {
     res.send(result);
   });
 
+  // get all product from a category
+  app.get("/categories/:id", async (req, res) => {
+    res.send([]);
+  });
+
   // create an user
   app.post("/users", async (req, res) => {
     const user = req.body;
     user.isBuyer = true;
+    const isExisting = await usersCollection.findOne({ email: user?.email });
+
+    if (isExisting) {
+      return res.status(200).send({ message: "User already exists!" });
+    }
+
     const result = await usersCollection.insertOne(user);
     res.send(result);
   });
@@ -95,7 +106,7 @@ const run = async () => {
       });
       return res.send({ accessToken: token });
     }
-    res.status(401).send({ accessToken: "" });
+    res.status(401).send({ message: "Unauthorized access" });
   });
 };
 run().catch(console.dir);
