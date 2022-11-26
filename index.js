@@ -108,6 +108,13 @@ const run = async () => {
     res.send({ isAdmin: result?.userRole === "seller" });
   });
 
+  // get all sellers
+  app.get("/users/seller", verifyToken, async (req, res) => {
+    const query = { userRole: "seller" };
+    const result = await usersCollection.find(query).toArray();
+    res.send(result);
+  });
+
   // create an user
   app.post("/users", async (req, res) => {
     const user = req.body;
