@@ -92,6 +92,13 @@ const run = async () => {
     res.send({ isAdmin: result?.userRole === "admin" });
   });
 
+  // get all buyers
+  app.get("/users/buyer", verifyToken, async (req, res) => {
+    const query = { userRole: "buyer" };
+    const result = await usersCollection.find(query).toArray();
+    res.send(result);
+  });
+
   // check buyer status
   app.get("/users/buyer/:email", verifyToken, async (req, res) => {
     const email = req.params.email;
