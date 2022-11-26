@@ -95,8 +95,15 @@ const run = async () => {
   // add a product
   app.post("/products", verifyToken, verifySeller, async (req, res) => {
     const product = req.body;
-    console.log(req.body);
     const result = await productsCollection.insertOne(product);
+    res.send(result);
+  });
+
+  // get all products
+  app.get("/products", verifyToken, verifySeller, async (req, res) => {
+    const sellerEmail = req?.query?.email;
+    const query = { sellerEmail };
+    const result = await productsCollection.find(query).toArray();
     res.send(result);
   });
 
