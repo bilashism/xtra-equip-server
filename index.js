@@ -66,6 +66,16 @@ const run = async () => {
   const usersCollection = database.collection("users");
   const productsCollection = database.collection("products");
 
+  const verifyAdmin = async (req, res, next) => {
+    const decodedEmail = req.decoded.email;
+    const query = { email: decodedEmail };
+    const user = await usersCollection.findOne(query);
+    if (user?.userRole !== "admin") {
+      return res.status(403).send({ message: "Forbidden access" });
+    }
+    next();
+  };
+
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
     const limit = parseInt(req.query.limit);
@@ -119,6 +129,14 @@ const run = async () => {
   app.get("/users/seller", verifyToken, async (req, res) => {
     const query = { userRole: "seller" };
     const result = await usersCollection.find(query).toArray();
+    res.send(result);
+  });
+
+  // delete an user
+  app.delete("/users/:id", verifyToken, verifyAdmin, async (req, res) => {
+    const userId = req.params.id;
+    const query = { _id: ObjectId(userId) };
+    const result = await usersCollection.deleteOne(query);
     res.send(result);
   });
 
