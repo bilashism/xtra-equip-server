@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+const bdDistrictNames = require("./data/bd/districtNames.json");
+
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -51,6 +53,10 @@ app.get("/", (req, res) => {
   res.sendStatus(200);
 });
 
+app.get("/bd/districtNames", (req, res) => {
+  res.send(bdDistrictNames);
+});
+
 // integrate mongoDB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@${process.env.DB_CLUSTER_URL}/?retryWrites=true&w=majority`;
 
@@ -75,6 +81,24 @@ const run = async () => {
     }
     next();
   };
+
+  const verifySeller = async (req, res, next) => {
+    const decodedEmail = req.decoded.email;
+    const query = { email: decodedEmail };
+    const user = await usersCollection.findOne(query);
+    if (user?.userRole !== "seller") {
+      return res.status(403).send({ message: "Forbidden access" });
+    }
+    next();
+  };
+
+  // add a product
+  app.post("/products", verifyToken, verifySeller, async (req, res) => {
+    const product = req.body;
+    console.log(req.body);
+    const result = await productsCollection.insertOne(product);
+    res.send(result);
+  });
 
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
