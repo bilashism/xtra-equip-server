@@ -107,6 +107,15 @@ const run = async () => {
     res.send(result);
   });
 
+  // delete a product
+  app.delete("/products/:id", verifyToken, verifySeller, async (req, res) => {
+    const sellerEmail = req?.query?.email;
+    const productId = req?.params?.id;
+    const query = { sellerEmail, _id: ObjectId(productId) };
+    const result = await productsCollection.deleteOne(query);
+    res.send(result);
+  });
+
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
     const limit = parseInt(req.query.limit);
