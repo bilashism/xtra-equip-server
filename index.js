@@ -116,6 +116,28 @@ const run = async () => {
     res.send(result);
   });
 
+  // advertise a product
+  app.put(
+    "/products/advertisement/:id",
+    verifyToken,
+    verifySeller,
+    async (req, res) => {
+      const sellerEmail = req?.query?.email;
+      const productId = req?.params?.id;
+      const query = { sellerEmail, _id: ObjectId(productId) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: { isAdvertised: true }
+      };
+      const result = await productsCollection.updateOne(
+        query,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    }
+  );
+
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
     const limit = parseInt(req.query.limit);
