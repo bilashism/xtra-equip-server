@@ -116,13 +116,14 @@ const run = async () => {
     res.send(result);
   });
 
-  // report a product
+  // update a product
   app.put("/products/:id", verifyToken, async (req, res) => {
     const productId = req?.params?.id;
     const query = { _id: ObjectId(productId) };
     const options = { upsert: true };
+    const update = req?.body;
     const updatedDoc = {
-      $set: { isReported: true }
+      $set: update
     };
     const result = await productsCollection.updateOne(
       query,
