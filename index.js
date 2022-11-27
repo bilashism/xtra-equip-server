@@ -138,6 +138,13 @@ const run = async () => {
     }
   );
 
+  // get all advertised products
+  app.get("/products/advertisement", verifyToken, async (req, res) => {
+    const query = { isAdvertised: true };
+    const result = await productsCollection.find(query).toArray();
+    res.send(result);
+  });
+
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
     const limit = parseInt(req.query.limit);
