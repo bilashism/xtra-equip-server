@@ -205,7 +205,7 @@ const run = async () => {
     const email = req.params.email;
     const query = { email };
     const result = await usersCollection.findOne(query);
-    res.send({ isAdmin: result?.userRole === "buyer" });
+    res.send({ isBuyer: result?.userRole === "buyer" });
   });
 
   // check seller status
@@ -213,7 +213,7 @@ const run = async () => {
     const email = req.params.email;
     const query = { email };
     const result = await usersCollection.findOne(query);
-    res.send({ isAdmin: result?.userRole === "seller" });
+    res.send({ isSeller: result?.userRole === "seller" });
   });
 
   // get all sellers
