@@ -144,6 +144,14 @@ const run = async () => {
   // add a product
   app.post("/products", verifyToken, verifySeller, async (req, res) => {
     const product = req.body;
+    const email = product?.sellerEmail;
+    const query = { email, isSellerVerified: true };
+    const isSellerVerified = await usersCollection.findOne(query);
+
+    if (isSellerVerified) {
+      product.isSellerVerified = true;
+    }
+
     const result = await productsCollection.insertOne(product);
     res.send(result);
   });
