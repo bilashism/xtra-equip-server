@@ -244,6 +244,20 @@ const run = async () => {
     res.send(result);
   });
 
+  // verify a seller
+  app.put("/users/seller/:id", verifyToken, verifyAdmin, async (req, res) => {
+    const userId = req.params?.id;
+    const query = { _id: ObjectId(userId) };
+    const options = { upsert: true };
+    const update = req.body;
+    const updatedDoc = {
+      $set: update
+    };
+    const result = await usersCollection.updateOne(query, updatedDoc, options);
+
+    res.send(result);
+  });
+
   // delete an user
   app.delete("/users/:id", verifyToken, verifyAdmin, async (req, res) => {
     const userId = req.params.id;
@@ -258,6 +272,8 @@ const run = async () => {
     if (!user?.userRole) {
       user.userRole = "buyer";
     }
+    user.isVerified = false;
+
     const isExisting = await usersCollection.findOne({ email: user?.email });
 
     if (isExisting) {
