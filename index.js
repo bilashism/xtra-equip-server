@@ -164,12 +164,16 @@ const run = async () => {
 
   // get [limit] from all categories
   app.get("/categories", async (req, res) => {
-    const limit = parseInt(req.query.limit);
+    const limit = parseInt(req.query?.limit);
     const query = {};
-    const result = await categoriesCollection
-      .find(query)
-      .limit(limit)
-      .toArray();
+    let result;
+
+    if (limit) {
+      result = await categoriesCollection.find(query).limit(limit).toArray();
+    } else {
+      result = await categoriesCollection.find(query).toArray();
+    }
+
     res.send(result);
   });
 
