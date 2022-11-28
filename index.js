@@ -107,6 +107,27 @@ const run = async () => {
     res.send(result);
   });
 
+  // get all reported products
+  app.get("/products/reported", verifyToken, verifyAdmin, async (req, res) => {
+    // const sellerEmail = req?.query?.email;
+    const query = { isReported: true };
+    const result = await productsCollection.find(query).toArray();
+    res.send(result);
+  });
+
+  // delete a reported product
+  app.delete(
+    "/products/reported/:id",
+    verifyToken,
+    verifyAdmin,
+    async (req, res) => {
+      const productId = req?.params?.id;
+      const query = { _id: ObjectId(productId) };
+      const result = await productsCollection.deleteOne(query);
+      res.send(result);
+    }
+  );
+
   // delete a product
   app.delete("/products/:id", verifyToken, verifySeller, async (req, res) => {
     const sellerEmail = req?.query?.email;
