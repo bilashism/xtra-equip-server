@@ -117,6 +117,14 @@ const run = async () => {
     res.send(result);
   });
 
+  // get a product
+  app.get("/payment/:id", verifyToken, verifyBuyer, async (req, res) => {
+    const productId = req.params?.id;
+    const query = { _id: ObjectId(productId) };
+    const result = await productsCollection.findOne(query);
+    res.send(result);
+  });
+
   // get all booked products by a buyer
   app.get("/products/booked", verifyToken, verifyBuyer, async (req, res) => {
     const buyerEmail = req?.query?.email;
