@@ -92,6 +92,16 @@ const run = async () => {
     next();
   };
 
+  const verifyBuyer = async (req, res, next) => {
+    const decodedEmail = req.decoded.email;
+    const query = { email: decodedEmail };
+    const user = await usersCollection.findOne(query);
+    if (user?.userRole !== "buyer") {
+      return res.status(403).send({ message: "Forbidden access" });
+    }
+    next();
+  };
+
   // add a product
   app.post("/products", verifyToken, verifySeller, async (req, res) => {
     const product = req.body;
@@ -103,6 +113,14 @@ const run = async () => {
   app.get("/products", verifyToken, verifySeller, async (req, res) => {
     const sellerEmail = req?.query?.email;
     const query = { sellerEmail };
+    const result = await productsCollection.find(query).toArray();
+    res.send(result);
+  });
+
+  // get all booked products by a buyer
+  app.get("/products/booked", verifyToken, verifyBuyer, async (req, res) => {
+    const buyerEmail = req?.query?.email;
+    const query = { buyerEmail: buyerEmail, isBooked: true };
     const result = await productsCollection.find(query).toArray();
     res.send(result);
   });
