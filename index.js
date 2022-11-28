@@ -247,6 +247,7 @@ const run = async () => {
   // verify a seller
   app.put("/users/seller/:id", verifyToken, verifyAdmin, async (req, res) => {
     const userId = req.params?.id;
+    const userEmail = req.query?.email;
     const query = { _id: ObjectId(userId) };
     const options = { upsert: true };
     const update = req.body;
@@ -254,6 +255,9 @@ const run = async () => {
       $set: update
     };
     const result = await usersCollection.updateOne(query, updatedDoc, options);
+
+    const productsFilter = { sellerEmail: userEmail };
+    await productsCollection.updateMany(productsFilter, updatedDoc, options);
 
     res.send(result);
   });
@@ -272,7 +276,6 @@ const run = async () => {
     if (!user?.userRole) {
       user.userRole = "buyer";
     }
-    user.isVerified = false;
 
     const isExisting = await usersCollection.findOne({ email: user?.email });
 
