@@ -71,6 +71,7 @@ const run = async () => {
   const categoriesCollection = database.collection("categories");
   const usersCollection = database.collection("users");
   const productsCollection = database.collection("products");
+  const paymentsCollection = database.collection("payments");
 
   const verifyAdmin = async (req, res, next) => {
     const decodedEmail = req.decoded.email;
@@ -101,6 +102,44 @@ const run = async () => {
     }
     next();
   };
+
+  // stripe payment
+  app.post("/create-payment-intent", async (req, res) => {
+    const product = req.body;
+    const price = product.price;
+    const amount = price * 100;
+
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: "usd",
+      payment_method_types: ["card"]
+    });
+
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    });
+  });
+
+  // store payments
+  app.post("/payments", verifyToken, async (req, res) => {
+    const payment = req.body;
+    const result = await paymentsCollection.insertOne(payment);
+
+    const productId = payment.productId;
+    const transactionId = payment.transactionId;
+    const filter = { _id: ObjectId(productId) };
+    const options = { upsert: true };
+    const updatedProductInfo = {
+      $set: {
+        isSold: true,
+        isAdvertised: false,
+        transactionId
+      }
+    };
+    await productsCollection.updateOne(filter, updatedProductInfo, options);
+    res.send(result);
+  });
 
   // add a product
   app.post("/products", verifyToken, verifySeller, async (req, res) => {
@@ -204,7 +243,7 @@ const run = async () => {
 
   // get all advertised products
   app.get("/products/advertisement", async (req, res) => {
-    const query = { isAdvertised: true };
+    const query = { isAdvertised: true, isSold: false };
     const result = await productsCollection.find(query).toArray();
     res.send(result);
   });
