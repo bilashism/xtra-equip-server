@@ -164,6 +164,14 @@ const run = async () => {
     res.send(result);
   });
 
+  // search products
+  app.get("/products/search", async (req, res) => {
+    const searchStr = req.query.find.toLowerCase();
+    const query = { productName: { $regex: searchStr, $options: "i" } };
+    const result = await productsCollection.find(query).toArray();
+    res.send(result);
+  });
+
   // get a product
   app.get("/payment/:id", verifyToken, verifyBuyer, async (req, res) => {
     const productId = req.params?.id;
