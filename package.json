@@ -27,10 +27,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-bilashism.git"
+    "url": "git+https://github.com/bilashism/xtra-equip-server.git"
   },
   "bugs": {
-    "url": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-bilashism/issues"
+    "url": "https://github.com/bilashism/xtra-equip-server/issues"
   },
-  "homepage": "https://github.com/programming-hero-web-course-4/b612-used-products-resale-server-side-bilashism#readme"
+  "homepage": "https://github.com/bilashism/xtra-equip-server#readme"
 }
